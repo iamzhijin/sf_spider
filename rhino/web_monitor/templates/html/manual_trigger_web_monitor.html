@@ -1,0 +1,46 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}网站监控{% endblock %}
+{% block sidenav %}
+    <li ><a href="{% url 'web_monitor:go2create_web_monitor_html' %}">创建网站监控任务</a></li>
+    <li ><a href="{% url 'web_monitor:show_web_monitor' %}">网站监控列表</a></li>
+    <li ><a href="{% url 'web_monitor:results_web_monitor' %}">网页数量监控列表</a></li>
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-2">
+            <h3>对比测试页面</h3>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <button id="manual_trigger"  type="button" class="btn btn-default" onclick="window.location='manual_trigger_web_monitor'">手动对比</button>
+{#            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>#}
+{#            <a href="{% url 'web_monitor:manual_trigger_web_monitor' %}">手动对比</a>#}
+{#        </button>#}
+        {{ result}}
+        <hr>
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+        <script src="{% static 'js/manual_trigger_web_monitor.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+        });
+
+
+
+
+    </script>
+{% endblock %}
+

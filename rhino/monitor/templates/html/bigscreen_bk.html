@@ -1,0 +1,109 @@
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>大屏显示</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="{% static 'css/lib/bootstrap-table.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/lib/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/lib/select2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'img/favicon.ico' %}" type="image/x-icon" rel="icon"/>
+    <link href="{% static 'css/body.css' %}" rel="stylesheet">
+    <link href="{% static 'css/app.4ff3b.css' %}" rel="stylesheet">
+
+</head>
+<body>
+<!-- 导航 -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Rhino</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a class="glyphicon glyphicon-transfer" href="{% url 'overview' %}"> 系统总览</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle glyphicon glyphicon-magnet" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false"> 数据采集<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">采集</li>
+                        <li><a href="{% url 'crawler_manage:project_list' %}">数据项目</a></li>
+                        <li><a href="{% url 'crawler_manage:crawler_list' %}">爬虫管理</a></li>
+                        <li><a href="{% url 'crawler_manage:task_list' %}">采集任务</a></li>
+                        <li><a href="{% url 'crawler_manage:processor_list' %}">通用清洗</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li class="dropdown-header">人工触发</li>
+                        <li><a href="{% url 'manual_crawler:manual_crawler_show' %}">司法爬虫</a></li>
+                        <li><a href="{% url 'manual_crawler:go2export_ent_sifa_info' %}">导出司法数据</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle glyphicon glyphicon-eye-open" data-toggle="dropdown"
+                       role="button" aria-haspopup="true" aria-expanded="false"> 监控报警<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">报警<span class="badge">42</span></a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'monitor:crawData_check_result' %}">工商爬虫</a></li>
+                        <li><a href="{% url 'web_monitor:go2create_web_monitor_html' %}">网站监控</a></li>
+                        <li><a href="/monitor2">预警信息</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle glyphicon glyphicon-cog" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false"> 设置<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'crawler_manage:server_list' %}">爬虫服务器</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li><p class="navbar-text navbar-left">欢迎你：<strong>{{ user.username }}</strong></p></li>
+                    <li><a href="{% url 'logout' %}">注销</a></li>
+                    <li></li>
+
+                {% else %}
+                    <li><a href="{% url 'login' %}">登陆</a></li>
+                {% endif %}
+
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div id="app"></div>
+
+<script type="text/javascript">
+    window.GLOBAL_CSRF_TOKEN = '{{ csrf_token }}';
+</script>
+
+<script src="{% static 'js/runtime.305fabae46e743964b1d.js' %}"></script>
+<script src="{% static 'js/vendor.85ddcd13abdc160ed028.js' %}"></script>
+<script src="{% static 'js/app.906e58d10330ed82e3c9.js' %}"></script>
+
+<script src="{% static 'js/lib/jquery.min.js' %}"></script>
+<script src="{% static 'js/lib/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/lib/bootstrap-table-zh-CN.min.js' %}"></script>
+<script src="{% static 'js/lib/bootstrap-table.min.js' %}"></script>
+<script src="{% static 'js/lib/select2.full.min.js' %}"></script>
+<script src="{% static 'js/common.js' %}"></script>
+<script src="{% static 'js/Math.js' %}"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,337 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}新建爬虫{% endblock %}
+{% block sidenav %}
+    <li><a href="{% url 'crawler_manage:crawler_list' %}">爬虫列表</a></li>
+    <li class="active"><a href="{% url 'crawler_manage:crawler_create' %}">新建爬虫<span
+            class="sr-only">(current)</span></a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-11">
+            <h2>新建爬虫</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-horizontal" method="post" enctype="multipart/form-data" role="form" name="crawler_create"
+                  id="crawler_create"
+                  action="{% url 'crawler_manage:crawler_create' %}">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="crawler_id">爬虫编码</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="crawler_id" id="crawler_id" type="text"
+                               placeholder="英文、数字、下划线、中横线组成"
+                               value="{% if form.crawler_id %}{{ form.crawler_id }}{% endif %}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="crawler_name">爬虫名字</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="crawler_name" id="crawler_name" type="text"
+                               placeholder="爬虫中文名"
+                               value="{% if form.crawler_name %}{{ form.crawler_name }}{% endif %}"/>
+                    </div>
+                </div>
+                <!-- <div class="form-group row">
+                    <label class="col-md-2 control-label" for="web_title">网站名称</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="web_title" id="web_title" type="text"
+                               placeholder="网站名称"
+                               value="{% if form.web_title %}{{ form.web_title }}{% endif %}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="web_url">网站链接</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="web_url" id="web_url" type="text"
+                               placeholder="网站链接"
+                               value="{% if form.web_url %}{{ form.web_url }}{% endif %}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="update_strategy">更新策略</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="update_strategy" id="update_strategy" type="text"
+                               placeholder="更新策略"
+                               value="{% if form.update_strategy %}{{ form.update_strategy }}{% endif %}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="use_for">使用场景</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="use_for" id="use_for" type="text"
+                               placeholder="使用场景"
+                               value="{% if form.use_for %}{{ form.use_for }}{% endif %}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="crawl_owner">负责人</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="crawl_owner" id="crawl_owner" type="text"
+                               placeholder="负责人"
+                               value="{% if form.crawl_owner %}{{ form.crawl_owner }}{% endif %}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="count">预估数量</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="count" id="count" type="text"
+                               placeholder="预估数量"
+                               value="{% if form.count %}{{ form.count }}{% endif %}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="time_limit">要求时限</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="time_limit" id="time_limit" type="text"
+                               placeholder="要求时限"
+                               value="{% if form.time_limit %}{{ form.time_limit }}{% endif %}"/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="source">数据源</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="source" id="source" type="text"
+                               placeholder="数据源"
+                               value="{% if form.source %}{{ form.source }}{% endif %}"/>
+                    </div>
+                </div> -->
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="project_id">数据项目</label>
+                    <div class="col-md-8">
+                        <input readonly="readonly" class="form-control" name="project" id="project" type="text"
+                               placeholder="选择项目" contenteditable="false"
+                               value="{% if form.project %}{{ form.project }}{% endif %}">
+                        <input type="hidden" readonly="readonly" class="form-control" name="project_id" id="project_id"
+                               placeholder="选择项目" contenteditable="false"
+                               value="{% if form.project_id %}{{ form.project_id }}{% endif %}">
+                        <input type="hidden" readonly="readonly" class="form-control" name="project_name"
+                               id="project_name"
+                               placeholder="选择项目" contenteditable="false"
+                               value="{% if form.project_name %}{{ form.project_name }}{% endif %}">
+                    </div>
+                    <a class="btn btn-primary" onclick="project_select()" href="#">选择项目</a>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="crawler_app">爬虫程序</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="crawler_app" id="crawler_app" type="file"
+                               value="{% if form.crawler_app %}{{ form.crawler_app }}{% endif %}"/>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-2 control-label" for="clean-method">清洗方式</label>
+                    <div class="col-md-10 radio">
+                        <label class="radio-inline">
+                            <input type="radio" onclick="choose_clean_method(1)"
+                                   name="clean_method" id="clean_method" value="custom" checked> 自定义程序
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" onclick="choose_clean_method(2)"
+                                   name="clean_method" id="clean_method" value="common"> 通用程序
+                        </label>
+
+                    </div>
+                </div>
+                <div id="common-clean-panel" class="fade" style="display: none;">
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="project_id">通用清洗程序</label>
+                        <div class="col-md-8">
+                            <input readonly="readonly" class="form-control" name="processor" id="processor" type="text"
+                                   placeholder="选择通用清洗" contenteditable="false"
+                                   value="{% if form.processor %}{{ form.processor }}{% endif %}">
+                            <input type="hidden" readonly="readonly" class="form-control" name="processor_id"
+                                   id="processor_id"
+                                   placeholder="选择通用清洗" contenteditable="false"
+                                   value="{% if form.processor_id %}{{ form.processor_id }}{% endif %}">
+                            <input type="hidden" readonly="readonly" class="form-control" name="processor_name"
+                                   id="processor_name"
+                                   placeholder="选择通用清洗" contenteditable="false"
+                                   value="{% if form.processor_name %}{{ form.processor_name }}{% endif %}">
+                        </div>
+                        <a class="btn btn-primary" onclick="processor_select()" href="#">选择程序</a>
+                    </div>
+
+                    <div id="clean_panel" class="form-group row fade" style="display:none">
+                        <label class="col-md-2 control-label" for="common_clean_app">清洗程序</label>
+                        <div class="col-md-10">
+                            <input readonly="readonly" class="form-control" name="common_clean_app" id="common_clean_app"/>
+                        </div>
+                    </div>
+                    <div id="class_panel" class="form-group row fade" style="display:none">
+                        <label class="col-md-2 control-label" for="common_clean_parameters">清洗程序类名</label>
+                        <div class="col-md-10">
+                            <input class="form-control" name="common_clean_parameters" id="common_clean_parameters" type="text"
+                                   readonly="readonly"/>
+                        </div>
+                    </div>
+                    <div id="field_panel" class="form-group row fade" style="display:none">
+                        <label class="col-md-2 control-label" for="common_field_mapping">字段映射</label>
+                        <div class="col-md-10">
+                        <textarea readonly="readonly" class="form-control" rows="8" name="common_field_mapping"
+                                  id="common_field_mapping"></textarea>
+                        </div>
+                    </div>
+                    <div id="deploy_target_panel" class="form-group row fade" style="display:none">
+                        <label class="col-md-2 control-label" for="common_deploy_target">发布目标</label>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon3">https://10.1.1.28:9200/</span>
+                            <input type="text" class="form-control" id="common_deploy_target" name="common_deploy_target"
+                                   aria-describedby="basic-addon3"
+                                   readonly="readonly">
+                        </div>
+                    </div>
+
+                </div>
+                <div id="custom-clean-panel" class="fade in">
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="clean_app">清洗程序</label>
+                        <div class="col-md-10">
+                            <input class="form-control" name="clean_app" id="clean_app" type="file"
+                                   value="{% if form.clean_app %}{{ form.clean_app }}{% endif %}"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="clean_parameters">清洗程序类名</label>
+                        <div class="col-md-10">
+                            <input class="form-control" name="clean_parameters" id="clean_parameters" type="text"
+                                   value="{% if form.clean_parameters %}{{ form.clean_parameters }}{% endif %}"
+                                   placeholder="com.yscredit.CleanApp"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="field_mapping">字段映射</label>
+                        <div class="col-md-10">
+                        <textarea class="form-control" rows="8" name="field_mapping"
+                                  id="field_mapping">{% if form.field_mapping %}
+                            {{ form.field_mapping }}{% endif %}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row fade">
+                        <label class="col-md-2 control-label" for="need_clean">暂缓清洗</label>
+                        <div class="col-md-10">
+                            <input class="form-control" name="need_clean" id="need_clean" type="checkbox"
+                                   placeholder="爬虫中文名"
+                                   {% ifequal form.need_clean 'on' %}checked="checked"{% endifequal %}/>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-warning" data-toggle="modal"
+                    data-target="#confirmModal">重填
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary" onclick="validateAndSubmitForm()">保存</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/crawler_create.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block modal %}
+    <div class="modal fade" id="confirmModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">警告</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>亲，确定要清除表单内容嘛？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="resetForm()">清除</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="projectSelectModal" class="modal fade">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <h2>选择数据项目</h2>
+                                    <hr/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-11">
+
+                                    <!-- Table -->
+                                    <table id="project-list-table">
+                                    </table>
+
+                                </div>
+                                {% csrf_token %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 处理程序选择弹出框 -->
+    <div id="processorSelectModal" class="modal fade">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <h2>选择通用清洗程序</h2>
+                                    <hr/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-11">
+
+                                    <!-- Table -->
+                                    <table id="processor-list-table">
+                                    </table>
+
+                                </div>
+                                {% csrf_token %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

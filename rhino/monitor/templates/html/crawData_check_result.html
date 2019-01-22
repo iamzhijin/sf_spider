@@ -1,0 +1,71 @@
+={% extends 'template/base.html' %}
+{% load static %}
+{% block title %}工商爬虫测试结果{% endblock %}
+{% block sidenav %}
+    <li ><a href="{% url 'monitor:add_monitor' %}">添加监控<span class="sr-only">(current)</span></a>
+    </li>
+    <li><a href="{% url 'monitor:monitor_list' %}">监控列表</a></li>
+    <li><a href="{% url 'monitor:start_monitorHTML' %}">启动监控</a></li>
+    <li class="active"><a href="{% url 'monitor:crawData_check_result' %}">测试结果</a></li>
+
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-11">
+            <h2>测试结果</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-11">
+            <h3>{{title}}</h3>
+            <h3>{{result}}</h3>
+        </div>
+        <div class="col-md-11">
+           <table>
+               <tr>
+                   <td>本次测试覆盖范围：</td>
+                   <td>基本信息、主要人员信息、变更信息、股东信息</td>
+               </tr>
+               <tr>
+                   <td>本次测试企业数量：</td>
+                   <td>{{test_count}}</td>
+               </tr>
+               <tr>
+                   <td>本次测试正确数量：</td>
+                   <td>{{correct_count}}</td>
+               </tr>
+               <tr>
+                   <td>本次测试错误数量：</td>
+                   <td>{{error_count}}</td>
+               </tr>
+               <tr>
+                   <td>本次错误企业：</td>
+                   <td>{{error_entName}}</td>
+               </tr>
+
+               <tr>
+                   <td>报告时间：</td>
+                   <td>{{create_time}}</td>
+               </tr>
+           </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+            initTable();
+        });
+    </script>
+{% endblock %}
+

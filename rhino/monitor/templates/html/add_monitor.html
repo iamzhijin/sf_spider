@@ -1,0 +1,102 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}工商爬虫{% endblock %}
+{% block sidenav %}
+    <li class="active"><a href="add_monitor">添加监控<span class="sr-only">(current)</span></a>
+    </li>
+    <li><a href="{% url 'monitor:monitor_list' %}">监控列表</a></li>
+    <li><a href="{% url 'monitor:start_monitorHTML' %}">启动监控</a></li>
+    <li><a href="{% url 'monitor:crawData_check_result' %}">测试结果</a></li>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+         <div class="row">
+                <div class="col-md-11">
+                    <h2>提交监控数据</h2>
+                    <hr/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-7">
+                    <form id="monitor_create" name="monitor_create" method="post" action="{% url 'monitor:add_monitor' %}">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">省份名称</span>
+                            <input id="monitor_province" name="monitor_province" type="text" class="form-control"
+                                   aria-describedby="basic-addon1" value="{% if form.monitor_province %}{{ form.monitor_province }}{% endif %}">
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon2">企业名称</span>
+                            <input id="monitor_entName" name="monitor_entName" type="text" class="form-control"
+                                   aria-describedby="basic-addon2"
+                            value="{% if form.monitor_entName %}{{ form.monitor_entName }}{% endif %}">
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon3">爬取内容</span>
+                            <textarea id="monitor_content" name="monitor_content" class="form-control" rows="10"
+                                      aria-describedby="basic-addon3">{% if form.monitor_content %}{{ form.monitor_content }}{% endif %}</textarea>
+                        </div>
+                        <br>
+
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-warning" data-toggle="modal"
+                            data-target="#confirmModal">重填</button>
+                    &nbsp;
+                    <button type="submit" class="btn btn-primary" onclick="validateAndSubmitForm()">保存</button>
+                </div>
+            </div>
+        {% csrf_token %}
+
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/add_monitor.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+            initTable();
+        });
+    </script>
+{% endblock %}
+
+
+{% block modal %}
+    <div class="modal fade" id="confirmModal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">警告</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>亲，确定要清除表单内容嘛？</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="resetForm()">清除</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}

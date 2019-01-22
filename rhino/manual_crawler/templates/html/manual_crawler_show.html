@@ -1,0 +1,132 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}司法爬虫{% endblock %}
+{% block sidenav %}
+    <li class="active"><a href="{% url 'manual_crawler:manual_crawler_show' %}">任务列表</a></li>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-11">
+            <h3>司法爬虫任务列表</h3>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+
+
+            <div id="toolbar" class="btn-group">
+
+                <button id="btn_add" type="button" class="btn btn-default" onclick="create_crawler_task();" >
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                </button>
+                <button id="btn_delete" type="button" class="btn btn-default btn-danger " onclick="deleteManual_Crawler();" >
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>  删除
+                </button>
+                <button id="btn_run" type="button" class="btn btn-info " onclick="run_manual_crawler();" >
+                        <span class="glyphicon glyphicon-play" aria-hidden="true"></span>  RUN
+                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" id="status_str" name="status_str" onclick="refreshTable_manual();">状态</button>
+                    <button type="button" class="btn btn-default dropdown-toggle"
+                            data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">切换下拉菜单</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" id="status" name="status" >
+                        <li><a href="#" onclick="refreshTable_manual('失败')" >失败</a></li>
+                        <li><a href="#" onclick="refreshTable_manual('待启动')" >待启动</a></li>
+                        <li><a href="#" onclick="refreshTable_manual('成功')" >成功</a></li>
+                        <li><a href="#" onclick="refreshTable_manual('0002')" >0002</a></li>
+                    </ul>
+                </div>
+                 <div class="btn-group">
+                     <input class="form-control" id="search_keyword" name="search_keyword" placeholder="老铁，这个支持模糊搜索" type="text">
+                 </div>
+            </div>
+            <!-- Table -->
+            <table id="crwawler_list_table" class="table table-hover table table-condensed ">
+            {% csrf_token %}
+            </table>
+
+
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+     <script src="{% static 'js/manual_crawler_list.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+            crawlerListTable();
+        });
+        $(function(){
+            $('#search_keyword').bind('keypress',function(event){
+             var status_str = $('#status_str').html();
+             refreshTable_manual(status_str)
+            });
+            $("#status li a").click(function(){
+                $('#status li ').removeClass('active');
+                $(this).parent().addClass('active');
+
+             });
+
+        });
+
+    </script>
+{% endblock %}
+
+
+{% block modal %}
+
+    <div id="create_crawler_task" class="modal fade" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">创建司法爬虫任务</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- show -->
+                        <div id="create_crawler_task_form" class="col-md-12">
+                            <form id="create_crawler_task_form" action= "{% url 'manual_crawler:submit_crawler' %}" method="POST" role="form" >
+                            {% csrf_token %}
+
+                                <label class="control-label" for="crawler_select">选择爬虫</label>
+                                <div class="form-group">
+                                        <label class="checkbox-inline"><input type="checkbox" name="crawler_type" value="judge_doc" > 裁判文书</label>
+                                        <label class="checkbox-inline"><input type="checkbox" name="crawler_type" value="shixin_beizhixing"> 失信被执行人</label>
+                                        <label class="checkbox-inline"><input type="checkbox" name="crawler_type" value="executive_announcement" > 被执行人</label>
+                                </div>
+                                <label class="control-label" for="select_ent_person">企业名/人名</label>
+                                <div class="form-group">
+                                    <select id="type" name="type" class="form-control ">
+                                        <option value="1"  >企业名</option>
+                                        <option value="2" selected="selected" >人名</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">爬取内容</label>
+                                    <textarea id="monitor_content" name="ent_person_name" class="form-control" rows="10"
+                                              aria-describedby="basic-addon3" placeholder="支持单个和列表输入">{% if form.ent_person_name %}{{ form.ent_person_name }}{% endif %}</textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary" >创建任务</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

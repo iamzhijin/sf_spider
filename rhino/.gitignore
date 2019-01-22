@@ -1,0 +1,20 @@
+/.idea
+rhino.iml
+rhino/templates/html/overview/node_modules
+monitor/templates/html/overview/dist
+# Python:
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+*.pyc
+build
+crawler_manage/__pycache__/
+crawler_manage/migrations/__pycache__/
+crawler_manage/platforms/__pycache__/
+monitor/migrations/__pycache__/
+monitor/migrations/
+crawler_manage/migrations/
+manual_crawler/migrations/
+monitor/templates/html/overview/node_modules
+celerybeat-schedule

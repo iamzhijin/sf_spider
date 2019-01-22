@@ -1,0 +1,294 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}新建通用清洗程序{% endblock %}
+{% block sidenav %}
+    <li><a href="{% url 'crawler_manage:processor_list' %}">通用清洗程序列表</a></li>
+    <li class="active"><a href="{% url 'crawler_manage:processor_create' %}">新建通用清洗程序<span
+            class="sr-only">(current)</span></a></li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-11">
+            <h2>新建通用清洗程序</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <form class="form-horizontal" method="post" role="form" enctype="multipart/form-data" id="processor_form" name="processor_form"
+                  action="{% url 'crawler_manage:processor_create_submit' %}">
+                {% csrf_token %}
+
+
+                <div id="task_detail_div" class="row">
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="processor_id">清洗程序编码</label>
+                        <div class="col-md-10">
+                            <input class="form-control" id="processor_id" name="processor_id"
+                                   type="text" placeholder="英文、数字、下划线组成"
+                            value="{% if request.POST and request.POST.processor_id %}{{  request.POST.processor_id }}{% endif %}"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="processor_name">清洗程序名字</label>
+                        <div class="col-md-10">
+                            <input class="form-control" id="processor_name" name="processor_name" type="text" placeholder="清洗程序中文名字"
+                            value="{% if request.POST and request.POST.processor_name %}{{  request.POST.processor_name }}{% endif %}" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="project_id">数据项目</label>
+                        <div class="col-md-8">
+                            <input readonly="readonly" class="form-control" name="project" id="project" type="text"
+                                   placeholder="选择项目" contenteditable="false"
+                                   value="{% if request.POST and request.POST.project %}{{  request.POST.project }}{% endif %}"  >
+                            <input type="hidden" readonly="readonly" class="form-control" name="project_id"
+                                   id="project_id"
+                                   placeholder="选择项目" contenteditable="false"
+                                   value="{% if request.POST and request.POST.project_id %}{{  request.POST.project_id }}{% endif %}" >
+                            <input type="hidden" readonly="readonly" class="form-control" name="project_name"
+                                   id="project_name"
+                                   placeholder="选择项目" contenteditable="false"
+                                   value="{% if request.POST and request.POST.project_name %}{{  request.POST.project_name }}{% endif %}" >
+                        </div>
+                        <a class="btn btn-primary" onclick="project_select()" href="#">选择项目</a>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="clean_app">清洗程序</label>
+                        <div class="col-md-10">
+                            <input class="form-control" name="clean_app" id="clean_app" type="file"
+                                   value="{% if request.POST and request.POST.clean_app %}{{  request.POST.clean_app }}{% endif %}"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="clean_parameters">清洗程序类名</label>
+                        <div class="col-md-10">
+                            <input class="form-control" name="clean_parameters" id="clean_parameters" type="text"
+                                   value="{% if request.POST and request.POST.clean_parameters %}{{  request.POST.clean_parameters }}{% endif %}"
+                                   placeholder="com.yscredit.CleanApp"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="field_mapping">字段映射</label>
+                        <div class="col-md-10">
+                        <textarea class="form-control" rows="8" name="field_mapping"
+                                  id="field_mapping">{% if request.POST and request.POST.field_mapping %}{{  request.POST.field_mapping }}{% endif %}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="field_mapping2">清洗规则</label>
+                        <div class="row" id="field_mapping2">
+                            <div class="col-md-8">
+                                <div class="col-md-2" id="crawler_select2">
+                                    <a class="btn btn-default btn-sm" href="#" onclick="check_field_mappings()">添加</a>
+                                </div>
+                                <!-- Table -->
+                                <table id="validate_rules_table">
+                                </table>
+                            </div>
+                            <!-- Table -->
+                        </div>
+                        <input type="hidden" name="validate_rules" id="validate_rules">
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="deploy_target">发布目标</label>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon3">https://10.1.1.28:9200/</span>
+                            <input type="text" class="form-control" id="deploy_target" name="deploy_target"
+                                   aria-describedby="basic-addon3"
+                                   placeholder="索引／类型，多个目标使用逗号分割，如judge_doc/total_doc,judge_doc/local_doc"
+                                   value="{% if request.POST and request.POST.deploy_target %}{{  request.POST.deploy_target }}{% endif %}"
+                            >
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-1">
+            <a class="btn btn-warning" data-toggle="modal" href="javascript:void(0)"
+               data-target="#confirmModal">重填
+            </a>
+        </div>
+        <div class="col-md-3">
+            <div class="col-md-3">
+                <a class="btn btn-primary" onclick="validateAndSubmitTaskForm()" href="javascript:void(0)">保存
+                </a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/processor_create.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+            $('.js-example-basic-single').select2();
+
+            populateValidateRulesTable([]);
+
+        });
+    </script>
+{% endblock %}
+
+{% block modal %}
+    <div class="modal fade" id="confirmModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">警告</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>亲，确定要清除表单内容嘛？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="resetForm()">清除</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 验证规则选择弹出框 -->
+    <div id="validateRuleSelectModal" class="modal fade">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">添加验证规则</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <!-- Table -->
+                            <form class="form-horizontal" role="form" id="validate_rule_form" name="validate_rule_form"
+                                  action="return false">
+                                <div class="form-group row">
+                                    <label class="col-md-2 control-label" for="crawler_name">规则描述</label>
+                                    <div class="col-md-6">
+                                        <input class="form-control" name="rule_desc" id="rule_desc" type="text"
+                                               placeholder="规则描述"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 control-label ">字段选择</label>
+                                    <select id="rule_fields" class="js-example-basic-single" style="width: 400px;"
+                                            name="rule_fields[]" multiple="multiple">
+                                    </select>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 control-label" for="crawler_name">规则类型</label>
+                                    <div class="col-md-2">
+                                        <a class="btn btn-default btn-sm" onclick="validRuleSelect(0)"
+                                           href="javascript:void(0)">正则表达式验证</a>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a class="btn btn-default btn-sm" onclick="validRuleSelect(1)"
+                                           href="javascript:void(0)">数据类型验证</a>
+                                    </div>
+                                    <input type="hidden" id="rule_type" name="rule_type" value="1">
+                                </div>
+                                <div id="rule_div" class="form-group row">
+                                    <label class="col-md-2 control-label" for="crawler_name"
+                                           id="rule_label">正则表达式</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control fade in" name="rule" id="rule" type="text"
+                                               placeholder="正则表达式" value=""/>
+                                        <div id="type_select" style="display:none;">
+                                            <div class="col-md-2">
+                                                <a class="btn btn-default btn-sm" onclick="typeSelect(1)"
+                                                   href="javascript:void(0)">日期</a>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a class="btn btn-default btn-sm" onclick="typeSelect(2)"
+                                                   href="javascript:void(0)">浮点数</a>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a class="btn btn-default btn-sm" onclick="typeSelect(3)"
+                                                   href="javascript:void(0)">整数</a>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a class="btn btn-default btn-sm" onclick="typeSelect(4)"
+                                                   href="javascript:void(0)">不为空</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            {% csrf_token %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-warning" onclick="resetValidateForm()">重填
+                                </button>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary" onclick="validAndSaveRule()">添加</button>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary" onclick="saveRuleAndContinue()">保存并继续</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="projectSelectModal" class="modal fade" >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <h2>选择数据项目</h2>
+                                    <hr/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-11">
+
+                                    <!-- Table -->
+                                    <table id="project-list-table">
+                                    </table>
+
+                                </div>
+                                {% csrf_token %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

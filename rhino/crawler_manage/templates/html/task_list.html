@@ -1,0 +1,230 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}采集任务列表{% endblock %}
+{% block sidenav %}
+    <li class="active"><a href="{% url 'crawler_manage:task_list' %}">采集任务列表<span
+            class="sr-only">(current)</span></a></li>
+    <li><a href="{% url 'crawler_manage:task_create' %}">新建采集任务</a></li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-11">
+            <h2>浏览采集任务</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" action="" onsubmit="return false;">
+            <div class="col-md-3">
+                <label class="col-md-4 control-label" for="crawler_id">过滤项目</label>
+                <div class="col-md-8">
+                    <!--<input class="form-control" id="crawler_id" type="text" placeholder="英文、数字、下划线、中横线组成"/>-->
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            所有数据项目
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="#" onclick="project_filter('', '')">所有数据项目</a></li>
+                            {% if project_ids %}
+                                {% for id in project_ids %}
+                                    <li><a href="#"
+                                           onclick="project_filter('{{ id|first }}', '{{ id|last }}')">{{ id|first }}
+                                        ---- {{ id|last }}</a></li>
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                        <input type="hidden" id="project_id" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="col-md-2 control-label" for="crawler_id">搜索</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="search_keyword" type="text" placeholder="爬虫名称查询"/>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-md-11">
+
+            <!-- Table -->
+            <table id="task-list-table" data-row-style="rowStyle">
+            </table>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/task_list.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+                headers:{'X-CSRFTOKEN':'{{ csrf_token }}'},
+            });
+
+            $('#search_keyword').bind('keypress', function (event) {
+                if (event.keyCode == "13") {
+                    refreshTable();
+                }
+            })
+
+            populateTaskListTable();
+            detail_field_mapping_table_exists = false;
+            validateRuleTableInitialized = false;
+        });
+    </script>
+{% endblock %}
+
+{% block modal %}
+    <!-- 任务详情 -->
+    <div id="taskDetailModal" class="modal fade" style="overflow:scroll">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="taskDetailModalTitle">任务详情</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <!-- Table -->
+                        <div id="task_detail_div" class="row">
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="task_detail_id">任务编码</label>
+                                <div class="col-md-10">
+                                    <input readonly="readonly" class="form-control" id="task_detail_id"
+                                           name="task_detail_id"
+                                           type="text"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="task_detail_crawler_id">爬虫编码</label>
+                                <div class="col-md-10">
+                                    <input readonly="readonly" class="form-control" id="task_detail_crawler_id"
+                                           name="task_detail_crawler_id"
+                                           type="text"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="task_detail_crawler_name">爬虫名字</label>
+                                <div class="col-md-10">
+                                    <input readonly="readonly" class="form-control" id="task_detail_crawler_name"
+                                           type="text"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="task_detail_project_id">数据项目编码</label>
+                                <div class="col-md-10">
+                                    <input readonly="readonly" class="form-control" id="task_detail_project_id"
+                                           type="text"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="task_detail_project_name">数据项目</label>
+                                <div class="col-md-10">
+                                    <input readonly="readonly" class="form-control" id="task_detail_project_name"
+                                           type="text"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="task_detail_crawler_app">爬虫程序</label>
+                                <div class="col-md-7">
+                                    <input readonly="readonly" class="form-control" id="task_detail_crawler_app"
+                                           type="text"/>
+                                </div>
+                                <a id="view_crawler_app" href=""
+                                           class="col-md-2 btn btn-secondary"
+                                           target="_blank"
+                                           >查看代码</a>
+                                        <a id="download_crawler_app" href=""
+                                           class="col-md-1 btn btn-secondary"
+                                           >下载</a>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label"
+                                       for="task_detail_crawler_parameters">爬虫程序参数</label>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="task_detail_crawler_parameters"
+                                           name="task_detail_crawler_parameters" type="text"
+                                           readonly="readonly"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="task_detail_clean_app">清洗程序</label>
+                                <div class="col-md-9">
+                                    <input readonly="readonly" class="form-control" id="task_detail_clean_app"
+                                           type="text"/>
+                                </div>
+                                <a id="download_clean_app" href=""
+                                           class="col-md-1 btn btn-secondary"
+                                           >下载</a>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="task_detail_clean_parameters">清洗程序类名</label>
+                                <div class="col-md-10">
+                                    <input class="form-control" id="task_detail_clean_parameters"
+                                           name="task_detail_clean_parameters"
+                                           type="text"
+                                           readonly="readonly"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label"
+                                       for="task_detail_field_mapping_table">字段抽取</label>
+                                <input class="form-control" id="task_detail_field_mapping" type="hidden"/>
+                                <div class="col-md-10">
+                                    <table id="task_detail_field_mapping_table">
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label"
+                                       for="task_detail_validate_rules">清洗规则</label>
+                                <div class="col-md-10">
+                                    <!-- Table -->
+                                    <table id="task_detail_validate_rules_table">
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-2 control-label" for="task_detail_deploy_target">发布目标</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="basic-addon3">https://10.1.1.28:9200/</span>
+                                    <input readonly="readonly" class="form-control" id="task_detail_deploy_target"
+                                           type="text"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}新建爬虫服务器{% endblock %}
+{% block sidenav %}
+    <li><a href="{% url 'crawler_manage:server_list' %}">爬虫服务器列表</a></li>
+    <li class="active"><a href="{% url 'crawler_manage:server_create' %}">新建爬虫服务器<span
+            class="sr-only">(current)</span></a></li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-11">
+            <h2>新建爬虫服务器</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <form id="server_create" name="server_create" method="post"
+                  action="{% url 'crawler_manage:server_create_submit' %}">
+                {% csrf_token %}
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon1">服务器地址</span>
+                    <input id="host" name="host" type="text" class="form-control" placeholder="IP或者hostname"
+                           aria-describedby="basic-addon1"
+                           value="">
+                </div>
+                <br/>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon2">端口</span>
+                    <input id="port" name="port" type="text" class="form-control"
+                           placeholder="端口" aria-describedby="basic-addon2"
+                           value="">
+                </div>
+                <br/>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon3">服务器类型</span>
+                    <select id="type" class="js-example-basic-single" style="width: 400px;"
+                            name="type">
+                        <option value="pyspider" selected="selected">PySpider</option>
+                        <option value="scrapyd" disabled="disabled">Scrapyd</option>
+                    </select>
+
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon2">服务器用户名</span>
+                    <input id="username" name="username" type="text" class="form-control"
+                           placeholder="服务器用户名" aria-describedby="basic-addon2"
+                           value="{% if form.project_name %}{{ form.project_name }}{% endif %}">
+                </div>
+                <br/>
+                <div class="input-group">
+                    <span class="input-group-addon" id="basic-addon2">服务器密码</span>
+                    <input id="password" name="password" type="password" class="form-control"
+                           placeholder="服务器密码" aria-describedby="basic-addon2"
+                           value="{% if form.project_name %}{{ form.project_name }}{% endif %}">
+                </div>
+                <br/>
+
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-warning" data-toggle="modal"
+                    data-target="#confirmModal">重填
+            </button>
+            &nbsp;
+            <button type="submit" class="btn btn-primary" onclick="validateAndSubmitForm()">保存</button>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/server_create.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+            $('.js-example-basic-single').select2();
+
+        });
+    </script>
+{% endblock %}
+
+{% block modal %}
+    <div class="modal fade" id="confirmModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">警告</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>亲，确定要清除表单内容嘛？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="resetForm()">清除</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

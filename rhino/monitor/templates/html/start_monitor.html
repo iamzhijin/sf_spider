@@ -1,0 +1,47 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}工商爬虫{% endblock %}
+{% block sidenav %}
+    <li ><a href="add_monitor">添加监控<span class="sr-only">(current)</span></a>
+    </li>
+    <li><a href="{% url 'monitor:monitor_list' %}">监控列表</a></li>
+    <li class="active"><a href="{% url 'monitor:start_monitorHTML' %}">启动监控</a></li>
+    <li><a href="{% url 'monitor:crawData_check_result' %}">测试结果</a></li>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="col-md-11">
+        <h2>即时监控</h2><h4>(触发爬虫+对比测试)</h4>
+        <hr/>
+    </div>
+
+    <div class="col-md-11">
+         <form name="start_monitor_form" method="get" action="{% url 'monitor:lanch_monitor' %}">
+            <button  id="start_monitor" type="submit" onClick="monitor_action()">{{buttonName}}</button>
+         </form>
+         <br/>
+        {{alive_thread}}
+    </div>
+
+    <div class="col-md-11">
+        <h2>对比测试</h2>
+        <hr/>
+    </div>
+    <div class="col-md-11">
+         <form name="start_monitor_form2" method="get" action="{% url 'monitor:lanch_cmp' %}">
+            <button  id="start_monitor" type="submit" >对比测试</button>
+         </form>
+         <br/>
+        {{alive_thread}}
+    </div>
+
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/start_monitor.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

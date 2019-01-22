@@ -1,0 +1,65 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}浏览项目{% endblock %}
+{% block sidenav %}
+    <li class="active"><a href="{% url 'crawler_manage:project_list' %}">项目列表<span class="sr-only">(current)</span></a>
+    </li>
+    <li><a href="{% url 'crawler_manage:project_create' %}">新建项目</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-11">
+            <h2>浏览项目</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-11">
+
+            <!-- Table -->
+            <table id="project-list-table">
+            </table>
+
+        </div>
+        {% csrf_token %}
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/project_list.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+            initTable();
+        });
+    </script>
+{% endblock %}
+
+{% block modal %}
+    <div class="modal fade" id="confirmModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">警告</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>亲，确定要清除表单内容嘛？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="resetForm()">清除</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

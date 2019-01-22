@@ -1,0 +1,214 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}网站监控{% endblock %}
+{% block sidenav %}
+    <li ><a href="{% url 'web_monitor:go2create_web_monitor_html' %}">创建任务</a></li>
+    <li class="active"><a href="{% url 'web_monitor:show_web_monitor' %}">任务列表</a></li>
+    <li ><a href="{% url 'web_monitor:results_web_monitor' %}">结果列表</a></li>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-3">
+            <h3>网站监控任务列表</h3>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+
+             <div id="toolbar" class="btn-group">
+
+                    <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal" data-target="#create_web_monitor" >
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                    </button>
+                    <button id="btn_delete" type="button" class="btn btn-default btn-danger " onclick="delete_web_monitor();" >
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>  删除
+                    </button>
+                    <button id="btn_run" type="button" class="btn btn-info " onclick="run_web_monitor_task();" >
+                        <span class="glyphicon glyphicon-play" aria-hidden="true"></span>  Run
+                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" id="data_type" name="data_type" onclick="refresh_task_table();">
+                            数据类型
+                        </button>
+                        <button type="button" class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">切换下拉菜单</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" id="menu_data_type" name="menu_data_type">
+                            <li><a href="#" onclick="refreshTable_manual('开庭公告')">开庭公告</a></li>
+                            <li><a href="#" onclick="refreshTable_manual('曝光台')">曝光台</a></li>
+                            <li><a href="#" onclick="refreshTable_manual('裁判文书')">裁判文书</a></li>
+                            <li><a href="#" onclick="refreshTable_manual('失信被执行')">失信被执行人</a></li>
+                            <li><a href="#" onclick="refreshTable_manual('被执行人')">被执行人</a></li>
+                            <li><a href="#" onclick="refreshTable_manual('法院公告')">法院公告</a></li>
+                        </ul>
+
+                    </div>
+                 <div class="btn-group">
+                     <input class="form-control" id="search_keyword" name="search_keyword" placeholder="老铁，这个支持模糊搜索" type="text">
+                 </div>
+
+             </div>
+    </div>
+
+            <!-- Table -->
+            <table id="web_monitor_list_table" class="table table-hover table table-condensed ">
+            {% csrf_token %}
+            </table>
+
+
+{% endblock %}
+
+{% block javascript_file %}
+        <script src="{% static 'js/web_monitor_table.js' %}"></script>
+        <script src="{% static 'js/create_web_monitor_task.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'}
+            });
+            webMonitorListTable();
+        });
+        $(function(){
+            $("input[type='radio']").click(function() {
+                var val = $('input:radio[name="response_type"]:checked').val();
+                if (val == 'HTML') {
+                    $('#interface').css("display", "none");
+                    $('#html').css('display', 'block');
+                } else {
+                    $('#html').css('display', 'none');
+                    $('#interface').css('display', 'block');
+                }
+            });
+            $("input[type='radio']").click(function() {
+                var val = $('input:radio[name="request_function"]:checked').val();
+                if (val == 'GET') {
+                    $('#request_body_DIV').css("display", "none");
+                } else {
+                    $('#request_body_DIV').css('display', 'block');
+                }
+            });
+         $('#search_keyword').bind('keypress',function(event){
+             var data_type = $('#data_type').html();
+             refreshTable_manual(data_type)
+            });
+        $("#menu_data_type li a").click(function(){
+            $('#menu_data_type li ').removeClass('active');
+            $(this).parent().addClass('active');
+
+          })
+        });
+
+
+
+    </script>
+{% endblock %}
+
+
+{% block modal %}
+
+    <div id="create_web_monitor" class="modal fade in " role="dialog" >
+        <div class="modal-dialog" role="document" style="height: 1200px;width: 600px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">添加网站监控</h4>
+                </div>
+                <div class="modal-body" >
+                    <div class="row" >
+                        <!-- show -->
+                        <div id="create_web_monitor_task" >
+                            <form class="form-horizontal" method="post" role="form" id="task_form" name="task_form"
+                                  action="{% url 'web_monitor:create_web_monitor_task' %}">
+                                <div class="form-group row">
+                                    <label class="col-md-3 control-label" for="web_name">网站名称</label>
+                                    <div class="col-md-7">
+                                        <input  class="form-control" id="web_name" name="web_name" type="text" placeholder="请输入网站名称">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 control-label" for="web_site">网站地址</label>
+                                    <div class="col-md-7">
+                                        <input  class="form-control" id="web_site" name="web_site" type="text" placeholder="请输入网站地址">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 control-label" for="web_site">请求方式</label>
+                                    <div class="col-md-7">
+                                        <label class="radio-inline">
+                                            <input type="radio"  name="request_function" id="optionsRadios3" value="GET" checked> GET
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio"  name="request_function" id="optionsRadios4"  value="POST"> POST
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group row" style="display: none" id="request_body_DIV">
+                                    <label class="col-md-3 control-label" for="web_site">请求主体</label>
+                                    <div class="col-md-7">
+                                        <textarea  type="text" class="form-control" id="request_body" name="request_body" placeholder="请输入请求主体：例如opt=123&abc=321"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 control-label" for="web_site">响应内容</label>
+                                    <div class="col-md-7">
+                                        <label class="radio-inline">
+                                            <input type="radio"  name="response_type" id="optionsRadios3" value="HTML" checked> HTML
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="response_type" id="optionsRadios4"  value="INTERFACE"> 接口
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="html" id="html">
+                                    <div class="form-group row">
+                                        <label class="col-md-3 control-label" for="xpath_str">Xpath</label>
+                                        <div class="col-md-7">
+                                            <input  class="form-control" id="xpath_str" name="xpath_str" type="text" placeholder="请输入xpath表达式">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-3 control-label" for="re_str">Re正则</label>
+                                        <div class="col-md-7">
+                                            <input  class="form-control" id="re_str" name="re_str" type="text" placeholder="请输入正则表达式">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="interface" id="interface" style="display: none">
+                                    <div class="form-group row">
+                                        <label class="col-md-3 control-label" for="keyword">字段</label>
+                                        <div class="col-md-7">
+                                            <input  class="form-control" id="keyword" name="keyword" type="text" placeholder="请输入字段名称">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 control-label" for="per_num">每页数量</label>
+                                    <div class="col-md-7">
+                                        <input  class="form-control" id="per_num" name="per_num" type="text" placeholder="默认为-1">
+                                    </div>
+                                </div>
+                                {# 测试按钮 #}
+                                <div class="modal-footer col-md-12">
+                                    <button type="button" class="btn btn-danger" onclick="test();" >测试</button>
+
+                                    <button type="submit" class="btn btn-primary" >确定并保存</button>
+                                </div>
+                                {% csrf_token %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

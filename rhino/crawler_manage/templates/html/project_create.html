@@ -1,0 +1,104 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}新建项目{% endblock %}
+{% block sidenav %}
+    <li ><a href="{% url 'crawler_manage:project_list' %}">项目列表</a></li>
+    <li class="active"><a href="{% url 'crawler_manage:project_create' %}">新建项目<span class="sr-only">(current)</span></a></li>
+{% endblock %}
+
+{% block content %}
+            <div class="row">
+                <div class="col-md-11">
+                    <h2>新建项目</h2>
+                    <hr/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-7">
+                    <form id="project_create" name="project_create" method="post" action="{% url 'crawler_manage:project_create' %}">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">项目编码</span>
+                            <input id="project_id" name="project_id" type="text" class="form-control" placeholder="英文和数字组成"
+                                   aria-describedby="basic-addon1" value="{% if form.project_id %}{{ form.project_id }}{% endif %}">
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon2">项目名称</span>
+                            <input id="project_name" name="project_name" type="text" class="form-control"
+                                   placeholder="项目中文名" aria-describedby="basic-addon2"
+                            value="{% if form.project_name %}{{ form.project_name }}{% endif %}">
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon4">ES地址</span>
+                            <input id="es_table" name="es_table" type="text" class="form-control"
+                                   placeholder="ES地址" aria-describedby="basic-addon4"
+                            value="{% if form.es_table %}{{ form.es_table }}{% endif %}">
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon3">项目描述</span>
+                            <textarea id="project_desc" name="project_desc" class="form-control" rows="10"
+                                      aria-describedby="basic-addon3">{% if form.project_desc %}{{ form.project_desc }}{% endif %}</textarea>
+                        </div>
+                        <br>
+
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-warning" data-toggle="modal"
+                            data-target="#confirmModal">重填</button>
+                    &nbsp;
+                    <button type="submit" class="btn btn-primary" onclick="validateAndSubmitForm()">保存</button>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/project_create.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    {% comment %}<script type="text/javascript">
+    $(document).ready(function(){
+        var error_msg = '{% if form.error %}{{ form.error }}{% endif %}';
+        var success_msg = '{% if form.success %}{{ form.success }}{% endif %}'
+        if(error_msg.trim().length > 0)
+            alert_box('error',error_msg);
+
+        if(success_msg.trim().length > 0)
+            alert_box('success', success_msg)
+
+    });
+    </script>{% endcomment %}
+{% endblock %}
+
+{% block modal %}
+    <div class="modal fade" id="confirmModal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">警告</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>亲，确定要清除表单内容嘛？</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="resetForm()">清除</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}

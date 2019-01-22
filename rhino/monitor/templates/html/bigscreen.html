@@ -1,0 +1,32 @@
+{% extends 'template/no_sidebar_base.html' %}
+{% load static %}
+{% block title %}大屏显示{% endblock %}
+{%  block css %}
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{% static 'css/app.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+
+
+<div id="app">
+</div>
+
+
+{% endblock %}
+
+
+
+{%  block javascript_file %}
+    <script src="{% static 'js/runtime.js' %}"></script>
+    <script src="{% static 'js/vendor.js' %}"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+
+{% endblock %}
+{%  block javascript %}
+{% endblock %}
+
+
+
+

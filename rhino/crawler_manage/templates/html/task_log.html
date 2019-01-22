@@ -1,0 +1,36 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}采集任务列表{% endblock %}
+{% block sidenav %}
+    <li><a href="{% url 'crawler_manage:task_list' %}">采集任务列表<span
+            class="sr-only">(current)</span></a></li>
+    <li><a href="{% url 'crawler_manage:task_create' %}">新建采集任务</a></li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-11">
+            <h2>浏览任务日志</h2>
+            <hr/>
+        </div>
+    </div>
+    <input type="hidden" id="hidden" name="hidden" value="{{ task_id }}">
+    <div class="row" id="log">
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/task_log.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script >
+        window.onload=function(){
+            var task_id = $('#hidden').val();
+            init_ws(task_id)
+        }
+    </script>
+
+{% endblock %}
+

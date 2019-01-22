@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rhino -- 数据采集清洗平台</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="{% static 'css/lib/bootstrap-table.min.css' %}" type="text/css" rel="stylesheet">
+    <link href="{% static 'css/lib/bootstrap.min.css' %}" type="text/css" rel="stylesheet">
+    <link href="{% static 'img/favicon.ico' %}" type="image/x-icon" rel="icon"/>
+
+    <link href="{% static 'css/body.css' %}" type="text/css" rel="stylesheet">
+</head>
+
+<body background="{% static 'img/index_background.jpg' %}">
+
+<div class="container">
+
+    <div class="row  text-center" style="margin-top:25%;">
+        <div class="col-md-offset-4 col-md-4 col-sm-12 col-sm-offset-0" style="filter:alpha(opacity=50);rgba(255, 255, 255, 0.8); opacity: 0.9;border-radius: 10px; ">
+            <form class=" form-signin" method="post" name="loginForm" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="row"  style="margin-top: 5px;">
+                    <label for="username" class="sr-only">用户名</label>
+                    <input type="text" id="username" class="form-control" style="margin-top: 5px;" name="username" placeholder="用户名" required
+                           autofocus>
+                </div>
+                <div class="row" style="margin-top: 5px;">
+                    <label for="inputPassword" class="sr-only">Password</label>
+                    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="密码"
+                           required>
+                </div>
+                <div class="row" style="margin-top: 5px;">
+                    <div class="checkbox" style="color: #1b6d85;">
+                        <label>
+                            <input type="checkbox" value="remember-me" >记住我
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">登陆</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div> <!-- /container -->
+
+
+<script src="{% static 'js/lib/jquery.min.js' %}"></script>
+<script src="{% static 'js/lib/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/lib/bootstrap-table-zh-CN.min.js' %}"></script>
+<script src="{% static 'js/lib/bootstrap-table.min.js' %}"></script>
+</body>
+</html>

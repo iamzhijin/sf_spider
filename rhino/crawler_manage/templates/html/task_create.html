@@ -1,0 +1,395 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}新建采集任务{% endblock %}
+{% block sidenav %}
+    <li><a href="{% url 'crawler_manage:task_list' %}">采集任务列表</a></li>
+    <li class="active"><a href="{% url 'crawler_manage:task_create' %}">新建采集任务<span
+            class="sr-only">(current)</span></a></li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-11">
+            <h2>新建采集任务</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <form class="form-horizontal" method="post" role="form" id="task_form" name="task_form"
+                  action="{% url 'crawler_manage:task_create_submit' %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="crawler_select">选择爬虫</label>
+                        <div class="col-md-2" id="crawler_select">
+                            <a class="btn btn-default btn-sm" onclick="showSelectCrawlerModal()" href="#">选择</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="task_detail_div" class="row fade">
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="crawler_id">爬虫编码</label>
+                        <div class="col-md-10">
+                            <input readonly="readonly" class="form-control" id="crawler_id" name="crawler_id"
+                                   type="text"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="crawler_name">爬虫名字</label>
+                        <div class="col-md-10">
+                            <input readonly="readonly" class="form-control" id="crawler_name" type="text"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" style="display: none;">
+                        <label class="col-md-2 control-label" for="project_id">数据项目编码</label>
+                        <div class="col-md-10">
+                            <input readonly="readonly" class="form-control" id="project_id" type="text"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="project_name">数据项目</label>
+                        <div class="col-md-10">
+                            <input readonly="readonly" class="form-control" id="project_name" type="text"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="crawler_app">爬虫程序</label>
+                        <div class="col-md-10">
+                            <input readonly="readonly" class="form-control" id="crawler_app" type="text"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="crawler_parameters">爬虫程序参数</label>
+                        <div class="col-md-10">
+                            <input class="form-control" id="crawler_parameters" name="crawler_parameters" type="text"
+                                   placeholder="[key]=[value]，多个参数用逗号隔开，如 rate=1, burst=3"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="clean-method">清洗方式</label>
+                        <div class="col-md-10 radio">
+                            <label id="clean_method_1" class="radio-inline" style="display: block;">
+                                <input  type="radio" disabled
+                                       name="clean_method"  value="custom"
+                                       checked="checked"> 自定义程序
+                            </label>
+                            <label id="clean_method_2" class="radio-inline" style="display: none;">
+                                <input type="radio" disabled
+                                       name="clean_method"  value="common"
+                                       checked="checked"> 通用程序
+                            </label>
+
+                        </div>
+                    </div>
+
+                    <div id="processor_panel" class="fade" style="display: none">
+                        <div class="form-group row">
+                            <label class="col-md-2 control-label" for="processor_id">通用清洗程序编码</label>
+                            <div class="col-md-10">
+                                <input readonly="readonly" class="form-control" id="processor_id" type="text"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-md-2 control-label" for="processor_name">通用清洗程序名字</label>
+                            <div class="col-md-10">
+                                <input readonly="readonly" class="form-control" id="processor_name" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="clean_app">清洗程序</label>
+                        <div class="col-md-10">
+                            <input readonly="readonly" class="form-control" id="clean_app" type="text"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="clean_parameters">清洗程序类名</label>
+                        <div class="col-md-10">
+                            <input class="form-control" id="clean_parameters" name="clean_parameters" type="text"
+                                   placeholder="com.yscredit.CleanApp" readonly="readonly"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="detail_field_mapping_table">字段抽取</label>
+                        <input class="form-control" id="fields_mapping" type="hidden"/>
+                        <div class="col-md-10">
+                            <table id="detail_field_mapping_table">
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="field_mapping2">清洗规则</label>
+                        <div class="row" id="field_mapping2">
+                            <div class="col-md-8">
+                                <div class="col-md-2" id="crawler_select2">
+                                    <a class="btn btn-default btn-sm" href="#" data-target="#validateRuleSelectModal"
+                                       data-toggle="modal">添加</a>
+                                </div>
+                                <!-- Table -->
+                                <table id="validate_rules_table">
+                                </table>
+                            </div>
+                            <!-- Table -->
+                        </div>
+                        <input type="hidden" name="validate_rules" id="validate_rules">
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="server_id">爬虫运行服务器</label>
+                        <div class="row" id="field_mapping2">
+                            <div class="col-md-8">
+                                <select id="servers" class="js-example-basic-single" style="width: 800px;"
+                                        name="servers" multiple="multiple">
+                                    {% if spider_servers %}
+                                        {% for spider_server in spider_servers %}
+                                            <option value="{{ spider_server.id }}">{{ spider_server.host }}:{{ spider_server.port }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <!-- Table -->
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 control-label" for="deploy_target">发布目标</label>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon3">https://10.1.1.28:9200/</span>
+                            <input type="text" class="form-control" id="deploy_target" name="deploy_target"
+                                   aria-describedby="basic-addon3"
+                                   placeholder="索引／类型，多个目标使用逗号分割，如judge_doc/total_doc,judge_doc/local_doc"
+                            >
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-1">
+            <a class="btn btn-warning" data-toggle="modal" href="javascript:void(0)"
+               data-target="#confirmModal">重填
+            </a>
+        </div>
+        <div class="col-md-3">
+            <div class="col-md-3">
+                <a class="btn btn-primary" onclick="validateAndSubmitTaskForm()" href="javascript:void(0)">保存
+                </a>
+            </div>
+        </div>
+    </div>
+    {% comment %}<div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-warning" data-toggle="modal"
+                    data-target="#confirmModal">重填
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary" onclick="validateAndSubmitForm()">保存</button>
+        </div>
+    </div>{% endcomment %}
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/task_create.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+            $('.js-example-basic-single').select2();
+            detail_field_mapping_table_exists = false;
+
+            crawler_data = {};
+            var validateRules = [];
+            {% if crawler_data %}crawler_data = {
+                'id': '{{ crawler_data.id }}',
+                'crawler_name': '{{ crawler_data.crawler_name }}',
+                'project_id': '{{ crawler_data.project_id }}',
+                'project_name': '{{ crawler_data.project_name }}',
+                'crawler_app': '{{ crawler_data.crawler_app }}',
+                'clean_app': '{{ crawler_data.clean_app }}',
+                'clean_parameters': '{{ crawler_data.clean_parameters }}',
+                'fields_mapping': '{{ crawler_data.fields_mapping |safe | escapejs}}',
+                'clean_method': '{{ crawler_data.clean_method }}',
+                'processor_id': '{{ crawler_data.processor_id }}',
+                'processor_name': '{{ crawler_data.processor_name }}',
+                'deploy_target' : '{% if crawler_data.clean_method == 'common' %}{{ crawler_data.deploy_target }}{% endif %}',
+                'validate_rules': '{% if crawler_data.clean_method == 'common' %}{{ crawler_data.validate_rules|safe | escapejs }}{% endif %}',
+            };
+                populateCrawler(crawler_data);
+
+                {% if crawler_data.clean_method == 'common' %}
+
+                    validateRules = $.parseJSON(crawler_data['validate_rules']);
+                {% endif %}
+
+            {% endif %}
+
+
+            populateValidateRulesTable(validateRules);
+
+        });
+    </script>
+{% endblock %}
+
+{% block modal %}
+    <div class="modal fade" id="confirmModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">警告</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>亲，确定要清除表单内容嘛？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="resetForm()">清除</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 爬虫选择弹出框 -->
+    <div id="crawlerSelectModal" class="modal fade">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">选择爬虫</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <!-- Table -->
+                                <table id="crawler-list-table">
+                                </table>
+
+                            </div>
+                            {% csrf_token %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 验证规则选择弹出框 -->
+    <div id="validateRuleSelectModal" class="modal fade">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">添加验证规则</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <!-- Table -->
+                            <form class="form-horizontal" role="form" id="validate_rule_form" name="validate_rule_form"
+                                  action="return false">
+                                <div class="form-group row">
+                                    <label class="col-md-2 control-label" for="crawler_name">规则描述</label>
+                                    <div class="col-md-6">
+                                        <input class="form-control" name="rule_desc" id="rule_desc" type="text"
+                                               placeholder="规则描述"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 control-label ">字段选择</label>
+                                    <select id="rule_fields" class="js-example-basic-single" style="width: 400px;"
+                                            name="rule_fields[]" multiple="multiple">
+                                    </select>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-2 control-label" for="crawler_name">规则类型</label>
+                                    <div class="col-md-2">
+                                        <a class="btn btn-default btn-sm" onclick="validRuleSelect(0)"
+                                           href="javascript:void(0)">正则表达式验证</a>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a class="btn btn-default btn-sm" onclick="validRuleSelect(1)"
+                                           href="javascript:void(0)">数据类型验证</a>
+                                    </div>
+                                    <input type="hidden" id="rule_type" name="rule_type" value="1">
+                                </div>
+                                <div id="rule_div" class="form-group row">
+                                    <label class="col-md-2 control-label" for="crawler_name"
+                                           id="rule_label">正则表达式</label>
+                                    <div class="col-md-8">
+                                        <input class="form-control fade in" name="rule" id="rule" type="text"
+                                               placeholder="正则表达式" value=""/>
+                                        <div id="type_select" style="display:none;">
+                                            <div class="col-md-2">
+                                                <a class="btn btn-default btn-sm" onclick="typeSelect(1)"
+                                                   href="javascript:void(0)">日期</a>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a class="btn btn-default btn-sm" onclick="typeSelect(2)"
+                                                   href="javascript:void(0)">浮点数</a>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a class="btn btn-default btn-sm" onclick="typeSelect(3)"
+                                                   href="javascript:void(0)">整数</a>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <a class="btn btn-default btn-sm" onclick="typeSelect(4)"
+                                                   href="javascript:void(0)">不为空</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            {% csrf_token %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-warning" onclick="resetValidateForm()">重填
+                                </button>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary" onclick="validAndSaveRule()">添加</button>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary" onclick="saveRuleAndContinue()">保存并继续</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

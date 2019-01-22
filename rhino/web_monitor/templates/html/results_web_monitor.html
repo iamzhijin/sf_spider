@@ -1,0 +1,183 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}网站监控{% endblock %}
+{% block sidenav %}
+    <li ><a href="{% url 'web_monitor:go2create_web_monitor_html' %}">创建任务</a></li>
+    <li ><a href="{% url 'web_monitor:show_web_monitor' %}">任务列表</a></li>
+    <li class="active"><a href="{% url 'web_monitor:results_web_monitor' %}">结果列表</a></li>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-3">
+            <h3>网站监控结果列表</h3>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+
+             <div id="toolbar" class="btn-group">
+
+{#                    <button id="btn_add" type="button" class="btn btn-default" onclick="create_web_monitor();" >#}
+{#                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增#}
+{#                    </button>#}
+                    <button id="btn_delete" type="button" class="btn btn-default btn-danger " onclick="delete_web_monitor_data();" >
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>  删除
+                    </button>
+                    <button id="btn_run" type="button" class="btn btn-info" onclick="manual_trigger_web_monitor();" >
+                        <span class="glyphicon glyphicon-play" aria-hidden="true"></span>  对比
+                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" id="original_status" name="original_status" onclick="refresh_result_table_status();">
+                            状态
+                        </button>
+                        <button type="button" class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">切换下拉菜单</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" id="result_status" name="result_status">
+                            <li><a href="#" onclick="refreshTable_manual_result_status('未爬取成功')">未爬取成功</a></li>
+                            <li><a href="#" onclick="refreshTable_manual_result_status('预警')">预警</a></li>
+                            <li><a href="#" onclick="refreshTable_manual_result_status('ok')">ok</a></li>
+                            <li><a href="#" onclick="refreshTable_manual_result_status('es无数据')">es没有数据的</a></li>
+                        </ul>
+
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" id="data_type" name="data_type" onclick="refresh_result_table_data_type();">
+                            数据类型
+                        </button>
+                        <button type="button" class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">切换下拉菜单</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" id="menu_data_type" name="menu_data_type">
+                            <li><a href="#" onclick="refreshTable_manual_data_type('开庭公告')">开庭公告</a></li>
+                            <li><a href="#" onclick="refreshTable_manual_data_type('曝光台')">曝光台</a></li>
+                            <li><a href="#" onclick="refreshTable_manual_data_type('裁判文书')">裁判文书</a></li>
+                            <li><a href="#" onclick="refreshTable_manual_data_type('失信被执行')">失信被执行人</a></li>
+                            <li><a href="#" onclick="refreshTable_manual_data_type('被执行人')">被执行人</a></li>
+                            <li><a href="#" onclick="refreshTable_manual_data_type('法院公告')">法院公告</a></li>
+                        </ul>
+
+                    </div>
+                 <div class="btn-group">
+                     <input class="form-control" id="search_keyword" name="search_keyword" placeholder="老铁，这个支持模糊搜索" type="text">
+                 </div>
+
+
+             </div>
+
+            <!-- Table -->
+            <table id="results_web_monitor_list_table" class="table table-hover table table-condensed ">
+            {% csrf_token %}
+            </table>
+
+
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+        <script src="{% static 'js/results_web_monitor_table.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'}
+            });
+            webMonitorListTable();
+        });
+
+    $(function(){
+        $('#search_keyword').bind('keypress',function(event){
+             refreshTable_manual()
+            });
+
+        $("#menu_data_type li a").click(function(){
+            $('#menu_data_type li ').removeClass('active');
+            $(this).parent().addClass('active');
+
+          });
+
+        $("#result_status li a").click(function(){
+            $('#result_status li ').removeClass('active');
+            $(this).parent().addClass('active');
+
+          });
+        });
+
+
+
+
+
+    </script>
+{% endblock %}
+
+
+{% block modal %}
+
+    <div id="create_web_monitor" class="modal fade" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">添加网站监控</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- show -->
+                        <div id="create_web_monitor_task" class="col-md-12">
+                            <form id="create_web_monitor_task_form" action= "{% url 'web_monitor:create_web_monitor_task' %}" method="POST" role="form" class="">
+                            {% csrf_token %}
+
+                            <div class="form-group">
+                                <label for="web_name">网站名称</label>
+                                <input type="text" class="form-control" id="web_name" name="web_name"
+                                       placeholder="请输入网站名称">
+                            </div>
+                            <div class="form-group">
+                                <label for="web_site">网站地址</label>
+                                <input type="text" class="form-control" id="web_site" name="web_site"
+                                       placeholder="请输入网站地址">
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="select_request_function">爬取方法</label>
+                                <select id="request_function" name="request_function" class="form-control ">
+                                    <option value="GET" selected="selected" >GET</option>
+                                    <option value="POST"  >POST</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="request_params">爬取参数</label>
+                                <textarea id="request_params" name="request_params" class="form-control" rows="3"
+                                          aria-describedby="basic-addon3" placeholder="请输入爬取参数"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Xpath表达式</label>
+                                <input type="text" class="form-control" id="xpath_str" class="xpath_str " name="xpath_str"
+                                placeholder="请输入Xpath表达式" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">每页数量</label>
+                                <input type="text" class="form-control" id="per_num" class="per_num " name="per_num"
+                                placeholder="请输入每页数量" />
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" >添加网页监控</button>
+                            </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

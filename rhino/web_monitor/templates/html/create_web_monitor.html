@@ -1,0 +1,141 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}创建网站监控{% endblock %}
+{% block sidenav %}
+    <li class="active"><a href="{% url 'web_monitor:go2create_web_monitor_html' %}">创建任务</a></li>
+    <li ><a href="{% url 'web_monitor:show_web_monitor' %}">任务列表</a></li>
+    <li ><a href="{% url 'web_monitor:results_web_monitor' %}">结果列表</a></li>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-2">
+            <h3>创建任务</h3>
+            <hr/>
+        </div>
+    </div>
+
+    <div class="row">
+        <form class="form-horizontal" method="post" role="form" id="task_form" name="task_form"
+              action="{% url 'web_monitor:create_web_monitor_task' %}">
+            <div class="form-group row">
+                <label class="col-md-1 control-label" for="web_name">网站名称</label>
+                <div class="col-md-6">
+                    <input  class="form-control" id="web_name" name="web_name" type="text" placeholder="请输入网站名称">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-1 control-label" for="web_site">网站地址</label>
+                <div class="col-md-6">
+                    <input  class="form-control" id="web_site" name="web_site" type="text" placeholder="请输入网站地址">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-1 control-label" for="request_function">请求方式</label>
+                <div class="col-md-6">
+                    <label class="radio-inline">
+                        <input type="radio"  name="request_function" id="optionsRadios3" value="GET" checked> GET
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio"  name="request_function" id="optionsRadios4"  value="POST"> POST
+                    </label>
+                </div>
+            </div>
+            <div class="form-group row" style="display: none" id="request_body_DIV">
+                <label class="col-md-1 control-label" for="web_site">请求主体</label>
+                <div class="col-md-6">
+                    <textarea  type="text" class="form-control" id="request_body" name="request_body" placeholder="请输入请求主体：例如opt=123&abc=321"></textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-1 control-label" for="response_type">响应内容</label>
+                <div class="col-md-6">
+                    <label class="radio-inline">
+                        <input type="radio"  name="response_type" id="optionsRadios3" value="HTML" checked> HTML
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="response_type" id="optionsRadios4"  value="INTERFACE"> 接口
+                    </label>
+                </div>
+            </div>
+            <div class="html" id="html">
+                <div class="form-group row">
+                    <label class="col-md-1 control-label" for="xpath_str">Xpath</label>
+                    <div class="col-md-6">
+                        <input  class="form-control" id="xpath_str" name="xpath_str" type="text" placeholder="请输入xpath表达式">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-1 control-label" for="re_str">Re正则</label>
+                    <div class="col-md-6">
+                        <input  class="form-control" id="re_str" name="re_str" type="text" placeholder="请输入正则表达式">
+                    </div>
+                </div>
+            </div>
+            <div class="interface" id="interface" style="display: none">
+                <div class="form-group row">
+                    <label class="col-md-1 control-label" for="keyword">字段</label>
+                    <div class="col-md-6">
+                        <input  class="form-control" id="keyword" name="keyword" type="text" placeholder="请输入字段名称">
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <label class="col-md-1 control-label" for="per_num">每页数量</label>
+                <div class="col-md-6">
+                    <input  class="form-control" id="per_num" name="per_num" type="text" placeholder="默认为-1">
+                </div>
+            </div>
+            {# 测试按钮 #}
+            <div class="modal-footer col-md-7">
+                <button type="button" class="btn btn-danger" onclick="test();" >测试</button>
+
+                <button type="submit" class="btn btn-primary" >确定并保存</button>
+            </div>
+            {% csrf_token %}
+        </form>
+	</div>
+
+
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/create_web_monitor_task.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+        });
+        $(function(){
+            $("input[type='radio']").click(function() {
+                var val = $('input:radio[name="response_type"]:checked').val();
+                if (val == 'HTML') { //html
+                    $('#interface').css("display", "none");
+                    $('#html').css('display', 'block');
+                } else {
+                    $('#html').css('display', 'none');
+                    $('#interface').css('display', 'block');
+                }
+            })
+            $("input[type='radio']").click(function() {
+                var val = $('input:radio[name="request_function"]:checked').val();
+                if (val == 'GET') { //html
+                    $('#request_body_DIV').css("display", "none");
+                } else {
+                    $('#request_body_DIV').css('display', 'block');
+                }
+            })
+        });
+
+
+
+    </script>
+{% endblock %}
+
+

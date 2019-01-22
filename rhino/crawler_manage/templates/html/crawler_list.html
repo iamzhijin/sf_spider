@@ -1,0 +1,204 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}爬虫列表{% endblock %}
+{% block sidenav %}
+    <li class="active"><a href="{% url 'crawler_manage:crawler_list' %}">爬虫列表<span
+            class="sr-only">(current)</span></a></li>
+    <li><a href="{% url 'crawler_manage:crawler_create' %}">新建爬虫</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-11">
+            <h2>浏览爬虫</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" action="" onsubmit="return false;">
+            <div class="col-md-3">
+                <label class="col-md-4 control-label" for="crawler_id">过滤项目</label>
+                <div class="col-md-8">
+                    <!--<input class="form-control" id="crawler_id" type="text" placeholder="英文、数字、下划线、中横线组成"/>-->
+                    <div class="dropdown ">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            所有数据项目
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                            <li><a href="#" onclick="project_filter('', '')">所有数据项目</a></li>
+                            {% if project_ids %}
+                                {% for id in project_ids %}
+                                    <li><a href="#"
+                                           onclick="project_filter('{{ id|first }}', '{{ id|last }}')">{{ id|first }}
+                                        ---- {{ id|last }}</a></li>
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <input type="hidden" id="project_id" value="">
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="col-md-2 control-label" for="crawler_id">搜索</label>
+                <div class="col-md-10">
+                    <input class="form-control" id="search_keyword" name="search_keyword" type="text"
+                           placeholder="爬虫名称搜索"/>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-md-11">
+
+            <!-- Table -->
+            <table id="crawler-list-table">
+            </table>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/crawler_list.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+
+            $('#search_keyword').bind('keypress', function (event) {
+                if (event.keyCode == "13") {
+                    refreshTable();
+                }
+            })
+
+            initTable();
+        });
+    </script>
+{% endblock %}
+
+{% block modal %}
+    <div class="modal fade" id="confirmModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">警告</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="alert-text"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="button" class="btn btn-primary" onclick="deleteCrawler(crawler_id,this.value)" value="0">确定</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="crawlerDetailModal" class="modal fade">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">爬虫详情</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+
+                            <div class="col-md-11">
+                                <form class="form-horizontal" role="form">
+                                    {% csrf_token %}
+                                    <div class="form-group row">
+                                        <label class="col-md-2 control-label" for="detail_crawler_id">爬虫编码</label>
+                                        <div class="col-md-10">
+                                            <input class="form-control" id="detail_crawler_id" type="text"
+                                                   placeholder="英文、数字、下划线、中横线组成" readonly="readonly"
+                                                   value="aaaa"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-2 control-label" for="detail_crawler_name">爬虫名字</label>
+                                        <div class="col-md-10">
+                                            <input class="form-control" id="detail_crawler_name" type="text"
+                                                   readonly="readonly"
+                                                   value="aaaa"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-2 control-label" for="detail_project_id">数据项目</label>
+                                        <div class="col-md-10">
+                                            <input readonly="readonly" class="form-control" id="detail_project"
+                                                   type="text"
+                                                   placeholder="选择项目" contenteditable="false" readonly="readonly"
+                                                   value="aaaa">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-2 control-label" for="detail_crawler_app">爬虫程序</label>
+                                        <div class="col-md-7">
+                                            <input class="form-control" id="detail_crawler_app" type="text"
+                                                   readonly="readonly"
+                                                   value="aaaa"/>
+                                        </div>
+                                        <a id="view_crawler_app" href=""
+                                           class="col-md-2 btn btn-secondary"
+                                           target="_blank"
+                                           >查看代码</a>
+                                        <a id="download_crawler_app" href=""
+                                           class="col-md-1 btn btn-secondary"
+                                           >下载</a>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-2 control-label" for="detail_clean_app">清洗程序</label>
+                                        <div class="col-md-9">
+                                            <input class="form-control" id="detail_clean_app" type="text"
+                                                   readonly="readonly"
+                                                   value="aaaa"/>
+                                        </div>
+                                        <a id="download_clean_app" href=""
+                                           class="col-md-1 btn btn-secondary"
+                                           >下载</a>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-2 control-label" for="detail_clean_parameters">清洗程序类名</label>
+                                        <div class="col-md-10">
+                                            <input class="form-control" id="detail_clean_parameters" type="text"
+                                                   readonly="readonly"
+                                                   value="aaaa"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-2 control-label" for="detail_field_mapping_table">字段映射</label>
+                                        <div class="col-md-10">
+                                            <table id="detail_field_mapping_table">
+                                            </table>
+                                            {% comment %}    <textarea class="form-control" rows="8" readonly="readonly"
+                                                          id="detail_field_mapping">aaaa</textarea>{% endcomment %}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            {% csrf_token %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,198 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/**flex相关**/
+.flexbox{
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}
+.flex1 {
+    -ms-flex: 1;
+    -webkit-flex:1;
+    flex:1;
+}
+.flex2{
+    -ms-flex: 2;
+    -webkit-flex:2;
+    flex:2;
+}
+.flex3{
+    -ms-flex: 3;
+    -webkit-flex:3;
+    flex:3;
+}
+.flex4{
+    -ms-flex: 4;
+    -webkit-flex:4;
+    flex:4;
+}
+.flex5{
+    -ms-flex: 5;
+    -webkit-flex:5;
+    flex:5;
+}
+.flex6{
+    -ms-flex: 6;
+    -webkit-flex:6;
+    flex:6;
+}
+.fdr {
+    -ms-flex-direction: row;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+}
+.fdc {
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+.jcfs {
+    -ms-flex-pack:start;
+    -webkit-justify-content: flex-start;
+    justify-content: flex-start;
+}
+.jcc {
+    -ms-flex-pack:center;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+.jcsb {
+    -ms-flex-pack:justify;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.jcsa {
+    -ms-flex-pack:justify;
+    -webkit-justify-content: space-around;
+    justify-content:space-around;
+}
+.jcfe {
+    -ms-flex-pack:end;
+    -webkit-justify-content: flex-end;
+    justify-content:flex-end;
+}
+.aifs {
+    -ms-flex-align: start;
+    -webkit-align-items: flex-start;
+    align-items: flex-start;
+}
+.aic {
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.aife {
+    -ms-flex-align: end;
+    -webkit-align-items: flex-end;
+    align-items: flex-end;
+}
+.fww {
+    -ms-flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+.asc {
+    -ms-align-self: center;
+    -webkit-align-self: center;
+    align-self: center;
+}
+.ass {
+    -ms-align-self: stretch;
+    -webkit-align-self: stretch;
+    align-self: stretch;
+}
+.asfs {
+    -ms-align-self: flex-start;
+    -webkit-align-self: flex-start;
+    align-self: flex-start;
+}
+.asfe {
+    -ms-align-self: flex-end;
+    -webkit-align-self: flex-end;
+    align-self: flex-end;
+}
+
+html,body {
+    height: 100%;
+    min-height: 700px;
+    min-width: 1200px;
+}
+#app {
+    height: 100%;
+    color: #222;
+    padding: 0 10px 10px;
+    background: #f6f6f6;
+}
+.box-back {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.list-container {
+    margin-right: 10px;
+    font-size: 14px;
+    overflow: hidden;
+}
+.list-container:last-child {
+    margin-right: 0;
+}
+.section1-1 {
+    padding: 10px;
+    margin-right: 10px;
+    overflow: hidden;
+}
+.section1-2 {
+    overflow: hidden;
+}
+.section2 {
+}
+.chart-tab {
+    margin:0 1em;
+    color:#666;
+    font-size:15px;
+    line-height: 24px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.chart-tab.active {
+    color: #2fb8f5;
+}
+#warningList {
+    font-size: 14px;
+    overflow: hidden;
+    position: relative;
+}
+.waring-list-li {
+    color: #fc9b03;
+    padding-left: 40px;
+    font-size: 14px;
+}
+.no-msg {
+    color: #2d5487;
+    font-size: 14px;
+}
+.list-li {
+    overflow: hidden;
+}
+.list-li > span {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-all;
+}
+.time-container {
+    position: absolute;
+    right: 60px;
+}
+.logo-img {
+    width: 100px;
+}
+.trans05 {
+    transition: all .5s;
+}

@@ -1,0 +1,59 @@
+{% extends 'template/base.html' %}
+{% load static %}
+{% block title %}监控列表{% endblock %}
+{% block sidenav %}
+    <li ><a href="add_monitor">添加监控<span class="sr-only">(current)</span></a>
+    </li>
+    <li class="active"><a href="{% url 'monitor:monitor_list' %}">监控列表</a></li>
+    <li><a href="{% url 'monitor:start_monitorHTML' %}">启动监控</a></li>
+    <li><a href="{% url 'monitor:crawData_check_result' %}">测试结果</a></li>
+
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-11">
+            <h2>监控列表</h2>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-11">
+
+            <div id="toolbar" class="btn-group">
+
+                <button id="btn_add" type="button" class="btn btn-default" onclick="window.open('add_monitor')" >
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                </button>
+                <button id="btn_delete" type="button" class="btn btn-default" onclick="deleteCrawData();" >
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                </button>
+            </div>
+            <!-- Table -->
+            <table id="monitor-list-table" >
+
+            </table>
+            {% csrf_token %}
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript_file %}
+    <script src="{% static 'js/monitor_list.js' %}"></script>
+    <script src="{% static 'js/deleteCrawData.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'},
+            });
+            initTable();
+        });
+
+
+    </script>
+{% endblock %}
