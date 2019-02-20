@@ -49,7 +49,7 @@ def ProjectList(request):
     '''分页展示爬虫列表'''
     if request.method == "GET":
         page_num = int(request.GET['pageNum'])
-        page_size = int(request.GET['pageSize'])
+        page_size = int(request.GET['pageSize'])           
         project_list = Project.objects.all().values()[(page_num-1)*page_size : page_num*page_size]
         for each_project in project_list:
             each_project['update_time'] = each_project['update_time'].strftime('%Y-%m-%d %H:%M:%S')
