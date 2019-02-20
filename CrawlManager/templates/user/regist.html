@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>注册</title>
+    <link href="{% static 'css/bootstrap/bootstrap.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/user.css' %}" rel="stylesheet" type="text/css">
+</head>    
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-5 form-box">
+            <form method="post" action="regist/">
+                <div class="input-group">
+                    <label for="username"></label>
+                    <input id="username" name="username" class="form-control" type="text" placeholder="帐号">
+                    <div class="input-group-addon">00</div>
+                </div> 
+                <div class="input-group">
+                    <label for="password"></label>
+                    <input id="password" name="password" class="form-control" type="password" placeholder="密码">
+                    <div class="input-group-addon">00</div>
+                </div>
+                <div class="input-group">
+                    <label for="email"></label>
+                    <input id="email" name="email" class="form-control" type="text" placeholder="邮箱">
+                    <div class="input-group-addon">00</div>
+                </div> 
+                <button class="btn btn-info btn-block" type="submit">注册</button>
+                <div class="go-login">
+                    <p>已有帐号,<a href="">前往登录</a></p> 
+                </div>
+            </form>
+        </div>
+    </div>
+</div>    
+</body>
+</html>

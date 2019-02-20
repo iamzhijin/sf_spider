@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf8"> 
+    <title>{% block title %} title {% endblock title %}</title> 
+    <link href="{% static 'css/bootstrap/bootstrap.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet" type="text/css">  
+    {% block css %}css{% endblock css %}
+</head>
+<body>
+<div id="app">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 sidebar">
+                <div>
+                    平台LOGO
+                </div>
+                <ul class="nav nav-sidebar">                   
+                    <li><a href="#">采集任务</a></li>
+                    <li><a href="#">爬虫</a></li>
+                    <li><a class="active" href="#">项目管理</a></li>
+                </ul>
+            </div>
+            <div class="col-md-10 col-md-offset-2">
+                <div class="row">                                   
+                    <nav class="navbar head">                        
+                        <div class="head-nav">
+                            <ul class="nav navbar-nav">
+                                <li class="active"><a href="#">爬虫管理</a></li>
+                                <li><a href="#">数据清洗</a></li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">选项<span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">选项1</a></li>
+                                        <li><a href="#">选项2</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>     
+                <div class="row">
+                    {% block content %}{% endblock content %}
+                </div>  
+            </div> 
+        </div>
+    </div>
+    
+        
+     
+</div>
+
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/bootstrap/bootstrap.js' %}"></script>
+</body>
+</html>
