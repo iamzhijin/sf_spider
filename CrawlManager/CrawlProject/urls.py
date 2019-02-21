@@ -3,7 +3,7 @@ from . import views
 
 app_name = "CrawlProject"
 urlpatterns = [
-    # path('', views.ProjectList, name="ProjectList"),
+    path('', views.ManageProject, name="ManageProject"),
     path('CreateProject/', views.CreateProject, name='CreateProject'),
     path('ProjectList/', views.ProjectList, name="ProjectList"),
 

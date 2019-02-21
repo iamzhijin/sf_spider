@@ -2,32 +2,25 @@
 {% load static %}
 {% block title %}项目管理{% endblock title %}
 {% block css %}
+<link href="{% static 'css/bootstrap/bootstrap-table.css' %}" rel="stylesheet" type="text/css">
 <link href="{% static 'css/project.css' %}" rel="stylesheet" type="text/css">  
 {% endblock css %} 
 {% block content %}
 <div class="col-md-7 project">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>项目名称</th>
-                <th>项目编码</th>
-                <th>项目描述</th>
-                <th>修改时间</th>
-                <th>创建时间</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for each_project in list %}
-            <tr>
-                <td>{{ each_project.project_name }}</td>
-                <td>{{ each_project.code }}</td>
-                <td>{{ each_project.describe }}</td>
-                <td>{{ each_project.update_time }}</td>
-                <td>{{ each_project.create_time }}</td>
-            </tr>
-            {% endfor %}            
-        </tbody>
-    </table>
+    <table id="project-list"></table>
 </div>
 
 {% endblock content %}
+
+{% block jsfile %}
+<script src="{% static 'js/bootstrap/bootstrap-table.js' %}"></script>
+<script src="{% static 'js/ProjectListTable.js' %}"></script>
+{% endblock jsfile %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function(){
+        ProjectListTable();
+    })
+</script>
+{% endblock javascript %}

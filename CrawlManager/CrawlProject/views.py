@@ -7,8 +7,8 @@ import json
 
 util = Util()
 
-# def ManageProject(request):
-#     return render(request, 'CrawlProject/ManageProject.html')
+def ManageProject(request):
+    return render(request, 'CrawlProject/ProjectList.html')
 
 
 def CreateProject(request):
@@ -48,19 +48,19 @@ def DeleteProject(request):
 def ProjectList(request):
     '''分页展示爬虫列表'''
     if request.method == "GET":
-        page_num = int(request.GET['pageNum'])
-        page_size = int(request.GET['pageSize'])           
-        project_list = Project.objects.all().values()[(page_num-1)*page_size : page_num*page_size]
+        offset = int(request.GET['offset'])
+        limit = int(request.GET['limit'])           
+        project_list = Project.objects.all().values()[offset : offset*limit+limit]
         for each_project in project_list:
             each_project['update_time'] = each_project['update_time'].strftime('%Y-%m-%d %H:%M:%S')
             each_project['create_time'] = each_project['create_time'].strftime('%Y-%m-%d %H:%M:%S')
         total_num = len(Project.objects.all())
         data = {
-            "totalNum": total_num,
-            "list": list(project_list)
+            "size": total_num,
+            "data": list(project_list)
         }
-        return render(request, 'CrawlProject/ProjectList.html', context=data)
-        # return JsonResponse(util.success_result(data=data))
+        # return render(request, 'CrawlProject/ProjectList.html', context=data)
+        return HttpResponse(json.dumps(data))
     else:
         return JsonResponse(util.fail_result(code='002')) 
         
