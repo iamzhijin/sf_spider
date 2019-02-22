@@ -11,7 +11,7 @@ function ProjectListTable() {
         url: url,
         toolbar: '#toolbar',
         toolbarAlign:'left',
-        height: $(window).height()*0.8,
+        // height: $(window).height()*0.8,
         width:$(window).width(),
         pagination:true,
         queryParams: queryParams,
@@ -22,14 +22,15 @@ function ProjectListTable() {
         pageNumber:1,                       //初始化加载第一页，默认第一页
         pageSize: 10,                       //每页的记录行数（*）
         pageList: [25, 50, 100, 'All'],     //可供选择的每页的行数（*）
-        sortName: 'full_name',                // 指定默认排序字段
+        sortName: 'full_name',              // 指定默认排序字段
         idField:'id',
         uniqueId: "id",                     //每一行的唯一标识，一般为主键列
         exportDataType: 'all',
         responseHandler: responseHandler,
-        showColumns:true,
-        showToggle:true,
+        showColumns:false,
+        showToggle:false,
         showRefresh:true,
+        theadClasses: 'thead-light',    // 定义表头的class
         columns: [
             {
                 field: '',
@@ -38,10 +39,7 @@ function ProjectListTable() {
                 valign: 'middle',
                 formatter: function(value, row, index){
                     return index + 1                
-                },
-                rowStyle:{  
-                    css:{"background-color":"red"}  
-                }  
+                },                 
             },
             {
                 field: 'project_name',
@@ -62,6 +60,20 @@ function ProjectListTable() {
                 valign: 'middle',               
             },
             {
+                field: 'crawl_num',
+                title: '爬虫数量',
+                algin: 'center',
+                valign: 'middle',
+                cellStyle: function(value, row, index){
+                    if(value>0){
+                        return {css:{"color": "#00ce68"}} // 爬虫数量大于是10 颜色显示为绿色
+                    }
+                    else{
+                        return {}
+                    }
+                }
+            },
+            {
                 field: 'update_time',
                 title: '修改时间',
                 algin: 'center',
@@ -73,7 +85,20 @@ function ProjectListTable() {
                 algin: 'center',
                 valign: 'middle',               
             },
-        ]
+            {
+                field: '',
+                title: '操作',
+                algin: 'center',
+                valgin: 'middle',
+                formatter: function(value, row, index){
+                    return [
+                        '<button type="button" class="btn btn-warning btn-xs" style="background-color: #ffaf00;">修改</button>',  
+                        '<button type="button" class="btn btn-danger btn-xs" style="background-color: #e65251;">删除</button>'
+                    ].join('&nbsp&nbsp')
+                    
+                }
+            }
+        ],
     });
 }
 

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from .form import ProjectForm
 from .models import Project
+from Crawls.models import Crawls
 from CrawlManager.Util import Util
 import json
 
@@ -54,6 +55,7 @@ def ProjectList(request):
         for each_project in project_list:
             each_project['update_time'] = each_project['update_time'].strftime('%Y-%m-%d %H:%M:%S')
             each_project['create_time'] = each_project['create_time'].strftime('%Y-%m-%d %H:%M:%S')
+            each_project['crawl_num'] = len(Crawls.objects.filter(project_id=each_project['id']))
         total_num = len(Project.objects.all())
         data = {
             "size": total_num,

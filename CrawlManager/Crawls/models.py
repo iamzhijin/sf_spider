@@ -11,7 +11,7 @@ def upload_to(instance, filename):
 class Crawls(models.Model):
     project_id = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, db_column="project_id", related_name="project")
     crawl_name = models.CharField("爬虫名称", max_length=30)
-    code = models.CharField("爬虫编码", max_length=50)
+    code = models.CharField("爬虫编码", max_length=50, null=True)
     crawl_file = models.FileField("爬虫文件", upload_to=upload_to, max_length=50)
     source = models.CharField("爬虫源网站", max_length=100)
     create_time = models.DateTimeField("创建日期", auto_now_add=True)

@@ -6,7 +6,7 @@ body,ul,li,ol,li,form,fieldset,div,dl,dt,dd,input,p,img{
 
 a {
     text-decoration: none;
-    color: #000;   
+    color: #4a4a4a;   
 }
 a:hover {
     color: #fff;
@@ -65,8 +65,8 @@ body {
 }
 
 .active {
-    color: #fff;
-    background-color: #3bccde;
+    color: #308ee0;
+    /* background-color: #3bccde; */
 }
 
 .main {
