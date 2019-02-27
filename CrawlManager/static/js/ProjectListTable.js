@@ -92,8 +92,8 @@ function ProjectListTable() {
                 valgin: 'middle',
                 formatter: function(value, row, index){
                     return [
-                        '<button type="button" class="btn btn-warning btn-xs" style="background-color: #ffaf00;">修改</button>',  
-                        '<button type="button" class="btn btn-danger btn-xs" style="background-color: #e65251;">删除</button>'
+                        '<button onclick="updateProject(\''+row.id +'\',\''+ row.project_name +'\',\''+ row.code +'\',\''+ row.describe +'\')" type="button" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#newProject" style="background-color: #ffaf00;">修改</button>',  
+                        '<button onclick="deleteProject(' +row.id+',\''+row.code+'\')" type="button" class="btn btn-danger btn-xs" style="background-color: #e65251;">删除</button>'
                     ].join('&nbsp&nbsp')
                     
                 }
@@ -130,4 +130,30 @@ function responseHandler(res) {
             "total" : 0
         };
     }
+}
+
+function deleteProject(id, code){
+    $.ajax({
+        type: "POST",
+        url: "/CrawlProject/DeleteProject/",
+        data: {id: id},
+        dataType: 'json',
+        success: function(result){
+            result = JSON.parse(result)
+            if (result.flag == '000'){
+                $("#project-list").bootstrapTable('remove', {  // 根据项目编码删除行
+                    field: 'code',
+                    values: code
+                });
+            }           
+        }
+    })
+}
+
+function updateProject(id, project_name, code, describe){
+    $('#id').val(id)
+    $('#addProject').text('修改项目');
+    $('#project_name').val(project_name);
+    $('#code').val(code);
+    $('#describe').val(describe);
 }
