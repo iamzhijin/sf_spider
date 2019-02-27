@@ -6,7 +6,7 @@ class Util():
         result = {
             'message': msg,
             'flag': '000',
-            'data': data
+            'data': [data]
         }
         return json.dumps(result)
 

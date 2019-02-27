@@ -18,27 +18,61 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="form-group" style="display: none;">
-                        <label for="id">id</label>
-                        <input id="id" class="form-control" type="text">
+                    <div class="form-group">
+                        <label for="new_projectname">项目名称</label>
+                        <input id="new_projectname" class="form-control" type="text">
                     </div>
                     <div class="form-group">
-                        <label for="project_name">项目名称</label>
-                        <input id="project_name" class="form-control" type="text">
+                        <label for="new_code">项目编码</label>
+                        <input id="new_code" class="form-control" type="text">
                     </div>
                     <div class="form-group">
-                        <label for="code">项目编码</label>
-                        <input id="code" class="form-control" type="text">
-                    </div>
-                    <div class="form-group">
-                        <label for="describe">项目描述</label>
-                        <textarea id="describe" class="form-control"></textarea>
+                        <label for="new_describe">项目描述</label>
+                        <textarea id="new_describe" class="form-control"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="save">保存</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="create_new">新建</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 更新项目模态框 -->
+<div id="upProject" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="update_project" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="update_project">修改项目</h5>
+                <button class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group" style="display:none">
+                        <label for="id">Text</label>
+                        <input id="id" class="form-control" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_projectname">项目名称</label>
+                        <input id="new_projectname" class="form-control" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_code">项目编码</label>
+                        <input id="new_code" class="form-control" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_describe">项目描述</label>
+                        <textarea id="new_describe" class="form-control"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="update">修改</button>
             </div>
         </div>
     </div>
@@ -67,12 +101,11 @@
         ProjectListTable();
     })
 
-    $('#save').click(function(){
+    $('#create_new').click(function(){
         var data = {
-            "id": $('#id').val(),
-            "project_name": $('#project_name').val(),
-            "code": $('#code').val(),
-            "describe": $('#describe').val()
+            project_name: $('#new_projectname').val(),
+            code: $('#new_code').val(),
+            describe: $('#new_describe').val()
         }
         $.ajax({
             type: "POST",
@@ -80,10 +113,46 @@
             data: data,
             dataType: 'json',
             success: function(result){
-                
+                result = JSON.parse(result)
+                if(result.flag== "000"){
+                    $('#project-list').bootstrapTable("refreshOptions",{pageNumber:1})
+                }
             }
         })
     })
+
+    $('#update').click(function(){
+        var data = {
+            id: $('#id').val(),
+            project_name: $('#new_projectname').val(),
+            code: $('#new_code').val(),
+            describe: $('#new_describe').val()
+        } 
+        $.ajax({
+            type: "POST",
+            url: "/CrawlProject/updateProject/",
+            data: data,
+            dataType: 'json',
+            success: function(result){
+                $('#project-list').bootStrapTable('getOptions').pageNumber; 
+            }
+        })
+    })
+
+    function deleteProject(id){
+        $.ajax({
+            type: "POST",
+            url: "/CrawlProject/DeleteProject/",
+            data: {id: id},
+            dataType: 'json',
+            success: function(result){
+                result = JSON.parse(result)
+                if (result.flag == '000'){
+                    $('#project-list').bootstrapTable('refresh')
+                }           
+            }
+        })
+    }
     
 </script>
 {% endblock javascript %}

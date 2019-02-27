@@ -7,4 +7,5 @@ urlpatterns = [
     path('CreateProject/', views.CreateProject, name='CreateProject'),
     path('ProjectList/', views.ProjectList, name="ProjectList"),
     path('DeleteProject/', views.DeleteProject, name="DeleteProject"),
+    path('UpdateProject', views.UpdateProject, name="UpdateProject"),
 ]

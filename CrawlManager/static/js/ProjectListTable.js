@@ -20,7 +20,7 @@ function ProjectListTable() {
         singleSelect: false,
         minimumCountColumns:2,
         pageNumber:1,                       //初始化加载第一页，默认第一页
-        pageSize: 10,                       //每页的记录行数（*）
+        pageSize: 5,                       //每页的记录行数（*）
         pageList: [25, 50, 100, 'All'],     //可供选择的每页的行数（*）
         sortName: 'full_name',              // 指定默认排序字段
         idField:'id',
@@ -33,13 +33,13 @@ function ProjectListTable() {
         theadClasses: 'thead-light',    // 定义表头的class
         columns: [
             {
-                field: '',
+                field: 'id',
                 title: '序号',
                 algin: 'center',
                 valign: 'middle',
-                formatter: function(value, row, index){
-                    return index + 1                
-                },                 
+                // formatter: function(value, row, index){
+                //     return index + 1                
+                // },                 
             },
             {
                 field: 'project_name',
@@ -92,8 +92,8 @@ function ProjectListTable() {
                 valgin: 'middle',
                 formatter: function(value, row, index){
                     return [
-                        '<button onclick="updateProject(\''+row.id +'\',\''+ row.project_name +'\',\''+ row.code +'\',\''+ row.describe +'\')" type="button" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#newProject" style="background-color: #ffaf00;">修改</button>',  
-                        '<button onclick="deleteProject(' +row.id+',\''+row.code+'\')" type="button" class="btn btn-danger btn-xs" style="background-color: #e65251;">删除</button>'
+                        '<button onclick="updateProject(\''+row.id +'\',\''+ row.project_name +'\',\''+ row.code +'\',\''+ row.describe +'\')" type="button" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#upProject" style="background-color: #ffaf00;">修改</button>',  
+                        '<button onclick="deleteProject(' +row.id+')" type="button" class="btn btn-danger btn-xs" style="background-color: #e65251;">删除</button>'
                     ].join('&nbsp&nbsp')
                     
                 }
@@ -104,7 +104,7 @@ function ProjectListTable() {
 
 function refreshTable_myfeedback() {
     var params = {
-        limit : 10, // 页面大小
+        limit : 5, // 页面大小
         offset : 0, // 页码
     }
     $('#project-list').bootstrapTable('refresh', params);    //刷新表格
@@ -132,28 +132,9 @@ function responseHandler(res) {
     }
 }
 
-function deleteProject(id, code){
-    $.ajax({
-        type: "POST",
-        url: "/CrawlProject/DeleteProject/",
-        data: {id: id},
-        dataType: 'json',
-        success: function(result){
-            result = JSON.parse(result)
-            if (result.flag == '000'){
-                $("#project-list").bootstrapTable('remove', {  // 根据项目编码删除行
-                    field: 'code',
-                    values: code
-                });
-            }           
-        }
-    })
-}
-
 function updateProject(id, project_name, code, describe){
     $('#id').val(id)
-    $('#addProject').text('修改项目');
-    $('#project_name').val(project_name);
-    $('#code').val(code);
-    $('#describe').val(describe);
+    $('#new_projectname').val(project_name);
+    $('#new_code').val(code);
+    $('#new_describe').val(describe);
 }

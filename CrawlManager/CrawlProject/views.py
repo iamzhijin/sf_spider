@@ -17,23 +17,19 @@ def CreateProject(request):
     if request.method == "POST":
         project_form = ProjectForm(request.POST) 
         if project_form.is_valid():
-            project_form_data = project_form.clean()
-            project_name=project_form_data['project_name'],
-            code=project_form_data['code'],
-            id=request.POST['id'],
-            print(id)
-            describe=request.POST['describe'],
-            if len(id) == 0:
-                insert_project = Project(
-                    project_name=project_name,
-                    code=code,
-                    describe=describe,               
-                )
-                insert_project.save()
-                return JsonResponse(util.success_result(), safe=False)
-            else:
-                Project.objects.filter(id=int(id)).update(project_name=project_name, code=code, describe=describe)
-                return JsonResponse(util.success_result(), safe=False)
+            form_data = project_form.cleaned_data
+            project_name = form_data['project_name']
+            code = form_data['code']
+            id = form_data['id']
+            describe = form_data['describe']
+            insert_project = Project(
+                project_name=project_name,
+                code=code,
+                describe=describe,               
+            )
+            insert_project.save()
+            # data = Project.objects.filter(id=id).values()
+            return JsonResponse(util.success_result(), safe=False)       
         else:
             error_message = project_form.errors.as_text()  
             return JsonResponse(util.fail_result(data=error_message), safe=False)
@@ -52,6 +48,22 @@ def DeleteProject(request):
         return JsonResponse(util.fail_result(), safe=False)            
 
 
+def UpdateProject(request):
+    if request.method == "POST":
+        project_form = ProjectForm(request.POST) 
+        if project_form.is_valid():
+            form_data = project_form.cleaned_data
+            project_name = form_data['project_name']
+            code = form_data['code']
+            id = form_data['id']
+            describe = form_data['describe']
+            Project.objects.filter(id=id).update(project_name=project_name, code=code, describe=describe)    
+            return JsonResponse(util.success_result(), safe=False)
+        else:
+            error_message = project_form.errors.as_text()  
+            return JsonResponse(util.fail_result(data=error_message), safe=False) 
+            
+
 def ProjectList(request):
     '''分页展示爬虫列表'''
     if request.method == "GET":
@@ -69,5 +81,5 @@ def ProjectList(request):
         }
         return HttpResponse(json.dumps(data))
     else:
-        return JsonResponse(util.fail_result(code='002')) 
+        return JsonResponse(util.fail_result(code='002'), safe=False) 
         

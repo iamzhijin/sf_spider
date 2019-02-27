@@ -1,6 +1,10 @@
 from django import forms
 
 class ProjectForm(forms.Form):
+    id  = forms.IntegerField(
+        required=False
+    )
+
     project_name = forms.CharField(
         max_length=30,
         required=True,
@@ -10,4 +14,8 @@ class ProjectForm(forms.Form):
         max_length=10,
         required=True,
         error_messages={"required": "项目编码不可为空", "max_length": "项目编码最大名称为10"}
+    )
+
+    describe = forms.CharField(
+        required=False
     )
