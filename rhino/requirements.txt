@@ -1,5 +1,5 @@
 ConfigParser==3.5.0
-django==1.11.6
+django==1.11.23
 ConfigParser==3.5.0
 avro-python3==1.8.2
 certifi==2017.7.27.1
