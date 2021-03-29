@@ -26,7 +26,7 @@ setup(
                         'django_crontab==0.7.1',
                         'pymongo==3.5.1',
                         'pymysql==0.7.11',
-                        'pygments==2.2.0',
+                        'pygments==2.7.4',
                         'threadpool==1.3.2',
                         'elasticsearch==6.0.0',
                         'celery==4.1.0',
