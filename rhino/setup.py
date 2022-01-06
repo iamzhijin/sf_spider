@@ -29,7 +29,7 @@ setup(
                         'pygments==2.2.0',
                         'threadpool==1.3.2',
                         'elasticsearch==6.0.0',
-                        'celery==4.1.0',
+                        'celery==5.2.2',
                         'django-celery==3.2.1',
                         'django-celery-results==1.0.1',
                         'xlwt==1.3.0'
