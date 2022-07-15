@@ -31,7 +31,7 @@ setup(
                         'elasticsearch==6.0.0',
                         'celery==4.1.0',
                         'django-celery==3.2.1',
-                        'django-celery-results==1.0.1',
+                        'django-celery-results==2.4.0',
                         'xlwt==1.3.0'
                         ],
 
